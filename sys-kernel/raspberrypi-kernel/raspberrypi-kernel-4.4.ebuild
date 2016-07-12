@@ -23,8 +23,7 @@ RDEPEND="${DEPEND}"
 
 src_install() {
 	cros-kernel2_src_install
-
-        "$(cros-workon_get_build_dir)/scripts/mkknlimg" \
+    "${D}/../work/raspberrypi-kernel/scripts/mkknlimg" \
                 "$(cros-workon_get_build_dir)/arch/arm/boot/zImage" \
                 "${T}/kernel.img"
 
