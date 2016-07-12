@@ -11,7 +11,7 @@ install_hybrid_mbr() {
   locate_gpt
   local start_esp=$(partoffset "$1" 12)
   local num_esp_sectors=$(partsize "$1" 12)
-  sudo sfdisk "$1" <<EOF
+  sudo sfdisk -X dos "$1" <<EOF
 unit: sectors
 
 disk1 : start=   ${start_esp}, size=    ${num_esp_sectors}, Id= c, bootable
@@ -24,10 +24,10 @@ install_raspberrypi_bootloader() {
   local efi_size_sectors=$(partsize "$1" 12)
   local efi_offset=$(( efi_offset_sectors * 512 ))
   local efi_size=$(( efi_size_sectors * 512 ))
+  local mount_opts=loop,offset=${efi_offset},sizelimit=${efi_size}
   local efi_dir=$(mktemp -d)
 
-  sudo mount -o loop,offset=${efi_offset},sizelimit=${efi_size} "$1" \
-    "${efi_dir}"
+  sudo mount -o "${mount_opts}"  "$1" "${efi_dir}"
 
   info "Installing firmware, kernel and overlays"
   sudo cp -r "${ROOT}/firmware/rpi/"* "${efi_dir}/"
